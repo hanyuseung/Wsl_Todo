@@ -20,8 +20,29 @@
             const todoList = document.getElementById('todo-list');
             todoList.innerHTML = '';
             todos.forEach(todo => {
+                //li element
                 const li = document.createElement('li');
-                li.textContent = `${todo.title}: ${todo.description}`;
+
+                //checkbox
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.style.marginRight = '10px';
+
+                //text element generate
+                const span = document.createElement('span');
+                span.textContent = `${todo.title}: ${todo.description}`;
+
+                //check box clicked -> strikeThrough toggle
+                checkbox.addEventListener('change', () => {
+                    if (checkbox.checked) {
+                        span.classList.add('completed');
+                    } else {
+                        span.classList.remove('completed');
+                    }
+                });
+
+                li.appendChild(checkbox);
+                li.appendChild(span);
                 todoList.appendChild(li);
             });
         }
@@ -30,12 +51,18 @@
             event.preventDefault();
             const title = document.getElementById('title').value;
             const description = document.getElementById('description').value;
+            const newTodo = {
+                id: Date.now(),
+                title,
+                description,
+                completed: false
+            }
             const response = await fetch('/todos', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ id: Date.now(), title, description, completed: false })
+                body: JSON.stringify(newTodo)
             });
             if (response.ok) {
                 fetchTodos();
